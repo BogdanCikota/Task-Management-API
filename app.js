@@ -25,6 +25,10 @@ app.use(methodOverride(function (req, res) {
   }
 }))
 
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin": "*")
+}) 
+
 const itemSchema = new mongoose.Schema({
   name: String
 });
