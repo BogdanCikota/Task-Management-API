@@ -3,10 +3,10 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const mongoose = require('mongoose');
-// const _ = require('lodash');
 const methodOverride = require('method-override');
 
-mongoose.connect('mongodb://localhost:27017/todolistDB2', { useNewUrlParser: true, useUnifiedTopology: true });
+mongoose.connect('mongodb+srv://admin-bogdan:test123@cluster0.kbao2.mongodb.net/todoappDB', { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false });
+// mongoose.connect('mongodb://localhost:27017/todolistDB2', { useNewUrlParser: true, useUnifiedTopology: true });
 
 const app = express();
 
@@ -18,7 +18,7 @@ app.use(express.static("public"));
 
 app.use(methodOverride(function (req, res) {
   if (req.body && typeof req.body === 'object' && '_method' in req.body) {
-    
+
     let method = req.body._method
     delete req.body._method
     return method
@@ -56,7 +56,7 @@ const listCollectionSchema = new mongoose.Schema({
 
 const List = mongoose.model('List', listCollectionSchema);
 
-app.get('/', function(req, res){
+app.get('/', function (req, res) {
   res.redirect('lists');
 });
 
@@ -66,12 +66,12 @@ app.route('/lists')
       if (err) {
         res.send(err);
       } else {
-        if(foundLists.length === 0) {
+        if (foundLists.length === 0) {
           const newList = new List({
             name: 'default list',
             items: defaultItems
           });
-      
+
           newList.save(function (err) {
             if (err) {
               res.send(err);
@@ -81,10 +81,8 @@ app.route('/lists')
           });
         } else {
           res.send(foundLists);
-          // const lists = foundLists;
-          // res.render('lists',{lists});
         }
-        
+
       }
     });
   })
@@ -98,7 +96,6 @@ app.route('/lists')
       if (err) {
         res.send(err);
       } else {
-        // res.send('Successfuly added new list.');
         res.redirect('/');
       }
     });
@@ -109,7 +106,6 @@ app.route('/lists')
       if (err) {
         res.send(err);
       } else {
-        // res.send('Successfuly deleted all lists');
         res.redirect('/');
       }
     });
@@ -124,8 +120,6 @@ app.route('/lists/:selectedList')
         res.send(err);
       } else {
         res.send(foundList);
-        // const list = foundList;
-        // res.render('list',{list,selectedList});
       }
     });
   })
@@ -159,15 +153,12 @@ app.route('/lists/:selectedList')
           if (error) {
             res.send(error);
           } else {
-            // res.send(list.items);
-            // res.send(list.items[list.items.length - 1]);
-            // foundList
-            if(list.name === 'default list'){
+            if (list.name === 'default list') {
               res.redirect('/');
             } else {
               res.redirect(list.name);
             }
-            
+
           }
         });
       }
@@ -219,19 +210,18 @@ app.route('/lists/:selectedList/:selectedItem')
 
         foundList.items.splice(index, 1);
 
-          foundList.save(function(error){
-              if(error){
-                res.send(error);
-              } else {
-                // res.send(foundList);
-                if(foundList.name === 'default list') {
-                  res.redirect('/');
-                } else {
-                  res.redirect('/lists/'+foundList.name);
-                }
-                
-              }
-            });
+        foundList.save(function (error) {
+          if (error) {
+            res.send(error);
+          } else {
+            if (foundList.name === 'default list') {
+              res.redirect('/');
+            } else {
+              res.redirect('/lists/' + foundList.name);
+            }
+
+          }
+        });
       }
 
     });
