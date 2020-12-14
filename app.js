@@ -4,6 +4,7 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const mongoose = require('mongoose');
 const methodOverride = require('method-override');
+const cors = require('cors');
 
 mongoose.connect('mongodb+srv://admin-bogdan:test123@cluster0.kbao2.mongodb.net/todoappDB', { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false });
 // mongoose.connect('mongodb://localhost:27017/todolistDB2', { useNewUrlParser: true, useUnifiedTopology: true });
@@ -23,7 +24,9 @@ app.use(methodOverride(function (req, res) {
     delete req.body._method
     return method
   }
-}))
+}));
+
+app.use(cors());
 
 const itemSchema = new mongoose.Schema({
   name: String
