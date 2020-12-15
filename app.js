@@ -57,7 +57,7 @@ const listCollectionSchema = new mongoose.Schema({
 const List = mongoose.model('List', listCollectionSchema);
 
 app.get('/', function (req, res) {
-  res.redirect('/lists');
+  res.redirect('lists');
 });
 
 app.route('/lists')
@@ -96,7 +96,7 @@ app.route('/lists')
       if (err) {
         res.send(err);
       } else {
-        res.redirect('/lists');
+        res.redirect('/');
       }
     });
   })
@@ -106,7 +106,7 @@ app.route('/lists')
       if (err) {
         res.send(err);
       } else {
-        res.redirect('/lists');
+        res.redirect('/');
       }
     });
   });
@@ -154,7 +154,7 @@ app.route('/lists/:selectedList')
             res.send(error);
           } else {
             if (list.name === 'default list') {
-              res.redirect('/lists');
+              res.redirect('/');
             } else {
               res.redirect(list.name);
             }
@@ -171,7 +171,7 @@ app.route('/lists/:selectedList')
       if (err) {
         res.send(err);
       } else {
-        res.redirect('/lists');
+        res.redirect('/');
       }
     });
   });
@@ -215,7 +215,7 @@ app.route('/lists/:selectedList/:selectedItem')
             res.send(error);
           } else {
             if (foundList.name === 'default list') {
-              res.redirect('/lists');
+              res.redirect('/');
             } else {
               res.redirect('/lists/' + foundList.name);
             }
