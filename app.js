@@ -96,7 +96,7 @@ app.route('/lists')
       if (err) {
         res.send(err);
       } else {
-        res.redirect('/');
+        res.redirect('/lists');
       }
     });
   })
@@ -106,7 +106,7 @@ app.route('/lists')
       if (err) {
         res.send(err);
       } else {
-        res.redirect('/');
+        res.redirect('/lists');
       }
     });
   });
@@ -154,7 +154,7 @@ app.route('/lists/:selectedList')
             res.send(error);
           } else {
             if (list.name === 'default list') {
-              res.redirect('/');
+              res.redirect('/lists');
             } else {
               res.redirect(list.name);
             }
@@ -171,7 +171,7 @@ app.route('/lists/:selectedList')
       if (err) {
         res.send(err);
       } else {
-        res.redirect('/');
+        res.redirect('/lists');
       }
     });
   });
@@ -215,7 +215,7 @@ app.route('/lists/:selectedList/:selectedItem')
             res.send(error);
           } else {
             if (foundList.name === 'default list') {
-              res.redirect('/');
+              res.redirect('/lists');
             } else {
               res.redirect('/lists/' + foundList.name);
             }
