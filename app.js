@@ -106,7 +106,18 @@ app.route('/lists')
       if (err) {
         res.send(err);
       } else {
-        res.redirect('/');
+        const newList = new List({
+          name: 'default list',
+          items: defaultItems
+        });
+        newList.save(function (err) {
+          if (err) {
+            res.send(err);
+          } else {
+            res.redirect('/');
+          }
+        });
+        
       }
     });
   });
