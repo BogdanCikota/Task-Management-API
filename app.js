@@ -11,11 +11,8 @@ mongoose.connect('mongodb+srv://admin-bogdan:test123@cluster0.kbao2.mongodb.net/
 
 const app = express();
 
-
-app.set('view engine', 'ejs');
-
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(express.static("public"));
+app.use(bodyParser.json());
 
 app.use(methodOverride(function (req, res) {
   if (req.body && typeof req.body === 'object' && '_method' in req.body) {
