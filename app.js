@@ -57,7 +57,7 @@ const listCollectionSchema = new mongoose.Schema({
 const List = mongoose.model('List', listCollectionSchema);
 
 app.get('/', function (req, res) {
-  res.redirect('lists');
+  res.redirect('/lists');
 });
 
 app.route('/lists')
