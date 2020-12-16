@@ -31,9 +31,9 @@ const itemSchema = new mongoose.Schema({
 
 const Item = mongoose.model('Item', itemSchema);
 
-// const item1 = new Item({
-//   name: 'Welcome to your todolst!'
-// });
+const item1 = new Item({
+  name: 'Welcome to your todolst!'
+});
 
 // const item2 = new Item({
 //   name: 'Hit the + button to add a new item.'
@@ -43,7 +43,7 @@ const Item = mongoose.model('Item', itemSchema);
 //   name: '<-- Hit this to delete an item.'
 // });
 
-// const defaultItems = [item1, item2, item3];
+const defaultItems = [item1];
 
 
 
@@ -69,7 +69,7 @@ app.route('/lists')
         if (foundLists.length === 0) {
           const newList = new List({
             name: 'default list',
-            items: []
+            items: defaultItems
           });
 
           newList.save(function (err) {
@@ -108,7 +108,7 @@ app.route('/lists')
       } else {
         const newList = new List({
           name: 'default list',
-          items: []
+          items: defaultItems
         });
         newList.save(function (err) {
           if (err) {
