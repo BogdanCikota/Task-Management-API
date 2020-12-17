@@ -238,19 +238,13 @@ app.route('/lists/:selectedList/:selectedItem')
           if (error) {
             res.send(error);
           } else {
-            List.find({}, function (er, foundLists) {
+            List.findOne({name: req.params.selectedList}, function (er, foundList) {
               if (er) {
                 res.send(er);
               } else {
-                res.send(foundLists);
+                res.send(foundList);
               }
             });
-            // if (foundList.name === 'default list') {
-            //   res.redirect('/');
-            // } else {
-            //   res.redirect('/lists/' + foundList.name);
-            // }
-
           }
         });
       }
