@@ -96,7 +96,13 @@ app.route('/lists')
       if (err) {
         res.send(err);
       } else {
-        res.redirect('/');
+        List.find({}, function (error, foundLists) {
+          if (error) {
+            res.send(error);
+          } else {
+            res.send(foundLists);
+          }
+        });
       }
     });
   })
@@ -110,14 +116,20 @@ app.route('/lists')
           name: 'default list',
           items: defaultItems
         });
-        newList.save(function (err) {
-          if (err) {
-            res.send(err);
+        newList.save(function (error) {
+          if (error) {
+            res.send(error);
           } else {
-            res.redirect('/');
+            List.find({}, function (er, foundLists) {
+              if (er) {
+                res.send(er);
+              } else {
+                res.send(foundLists);
+              }
+            });
           }
         });
-        
+
       }
     });
   });
