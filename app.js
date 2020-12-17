@@ -238,12 +238,19 @@ app.route('/lists/:selectedList/:selectedItem')
           if (error) {
             res.send(error);
           } else {
-            List.find({}, function (error, foundLists) {
+            List.find({}, function (er, foundLists) {
               if (er) {
                 res.send(er);
               } else {
                 res.send(foundLists);
               }
+            });
+            // if (foundList.name === 'default list') {
+            //   res.redirect('/');
+            // } else {
+            //   res.redirect('/lists/' + foundList.name);
+            // }
+
           }
         });
       }
