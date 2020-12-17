@@ -151,9 +151,9 @@ app.route('/lists/:selectedList')
       if (err) {
         res.send(err);
       } else {
-        List.find({}, function (err, foundLists) {
-          if (err) {
-            res.send(err);
+        List.find({}, function (error, foundLists) {
+          if (error) {
+            res.send(error);
           } else {
             res.send(foundLists);
           }
@@ -194,7 +194,13 @@ app.route('/lists/:selectedList')
       if (err) {
         res.send(err);
       } else {
-        res.redirect('/');
+        List.find({}, function (error, foundLists) {
+          if (error) {
+            res.send(error);
+          } else {
+            res.send(foundLists);
+          }
+        });
       }
     });
   });
