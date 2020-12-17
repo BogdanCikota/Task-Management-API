@@ -176,12 +176,7 @@ app.route('/lists/:selectedList')
           if (error) {
             res.send(error);
           } else {
-            if (list.name === 'default list') {
-              res.redirect('/');
-            } else {
-              res.redirect(list.name);
-            }
-
+            res.redirect(list.name);
           }
         });
       }
