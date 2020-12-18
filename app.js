@@ -216,7 +216,7 @@ app.route('/lists/:selectedList/:selectedItem')
           if (error) {
             res.send(error);
           } else {
-            List.find({}, function (er, foundLists) {
+            List.find({name: req.params.selectedList}, function (er, foundLists) {
               if (er) {
                 res.send(er);
               } else {
