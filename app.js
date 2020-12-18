@@ -207,6 +207,7 @@ app.route('/lists/:selectedList/items')
     });
   })
   .patch(function (req, res) {
+    //delete all items
     List.findOneAndUpdate({ name: req.params.selectedList }, { $set: { items: [] } }, { useFindAndModify: false }, function (err) {
       if (err) {
         res.send(err);
