@@ -225,32 +225,37 @@ app.route('/lists/:selectedList/items')
 
 app.route('/lists/:selectedList/items/:selectedItem')
   .patch(function (req, res) {
+    if(typeof(selectedItem) === 'string') {
+      List.findOne({ name: req.params.selectedList }, function (err, foundList) {
+        if (err) {
+          res.send(err);
+        } else {
+  
+          let newItem = foundList.items.filter(item => item.name === req.params.selectedItem)[0];
+  
+          newItem.name = req.body.name;
+  
+          foundList.save(function (error) {
+            if (error) {
+              res.send(error);
+            } else {
+              List.find({name: req.params.selectedList}, function (er, foundList) {
+                if (er) {
+                  res.send(er);
+                } else {
+                  res.send(foundList);
+                }
+              });
+            }
+          });
+        }
+  
+      });
+    } else {
+      res.send('Can not find item with that name');
+    }
 
-    List.findOne({ name: req.params.selectedList }, function (err, foundList) {
-      if (err) {
-        res.send(err);
-      } else {
-
-        let newItem = foundList.items.filter(item => item.name === req.params.selectedItem)[0];
-
-        newItem.name = req.body.name;
-
-        foundList.save(function (error) {
-          if (error) {
-            res.send(error);
-          } else {
-            List.find({name: req.params.selectedList}, function (er, foundList) {
-              if (er) {
-                res.send(er);
-              } else {
-                res.send(foundList);
-              }
-            });
-          }
-        });
-      }
-
-    });
+    
 
   })
   .delete(function (req, res) {
@@ -282,6 +287,6 @@ app.route('/lists/:selectedList/items/:selectedItem')
   });
 
 
-app.listen(process.env.PORT || 3000, function () {
-  console.log("Server started on port 3000");
+app.listen(process.env.PORT || 8080, function () {
+  console.log("Server started on port 8080");
 });
