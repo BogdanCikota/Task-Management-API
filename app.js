@@ -134,7 +134,7 @@ app.route('/lists')
     });
   });
 
-  app.route('/lists/:selectedList')
+app.route('/lists/:selectedList')
   .patch(function (req, res) {
     List.findOneAndUpdate({ name: req.params.selectedList }, { $set: { name: req.body.name } }, { useFindAndModify: false }, function (err) {
       if (err) {
@@ -178,7 +178,7 @@ app.route('/lists/:selectedList/items')
       }
     });
   })
-  
+
   .post(function (req, res) {
 
     const newItem = new Item({
@@ -225,21 +225,23 @@ app.route('/lists/:selectedList/items')
 
 app.route('/lists/:selectedList/items/:selectedItem')
   .patch(function (req, res) {
-    if(typeof(selectedItem) === 'string') {
-      List.findOne({ name: req.params.selectedList }, function (err, foundList) {
-        if (err) {
-          res.send(err);
-        } else {
-  
-          let newItem = foundList.items.filter(item => item.name === req.params.selectedItem)[0];
-  
+
+    List.findOne({ name: req.params.selectedList }, function (err, foundList) {
+      if (err) {
+        res.send(err);
+      } else {
+        // if (typeof(req.params.selectedItem) === 'string') {
+        //  console.log(foundList.items.filter(item => item.name === req.params.selectedItem)[0]);
+        let newItem = foundList.items.filter(item => item.name === req.params.selectedItem)[0];
+
+        if (newItem !== undefined) {
           newItem.name = req.body.name;
-  
+
           foundList.save(function (error) {
             if (error) {
               res.send(error);
             } else {
-              List.find({name: req.params.selectedList}, function (er, foundList) {
+              List.find({ name: req.params.selectedList }, function (er, foundList) {
                 if (er) {
                   res.send(er);
                 } else {
@@ -248,15 +250,11 @@ app.route('/lists/:selectedList/items/:selectedItem')
               });
             }
           });
+        } else {
+          res.send('Can not find item with that name');
         }
-  
-      });
-    } else {
-      res.send('Can not find item with that name');
-    }
-
-    
-
+      }
+    });
   })
   .delete(function (req, res) {
     List.findOne({ name: req.params.selectedList }, function (err, foundList) {
@@ -272,7 +270,7 @@ app.route('/lists/:selectedList/items/:selectedItem')
           if (error) {
             res.send(error);
           } else {
-            List.findOne({name: req.params.selectedList}, function (er, foundList) {
+            List.findOne({ name: req.params.selectedList }, function (er, foundList) {
               if (er) {
                 res.send(er);
               } else {
