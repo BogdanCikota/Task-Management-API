@@ -230,8 +230,6 @@ app.route('/lists/:selectedList/items/:selectedItem')
       if (err) {
         res.send(err);
       } else {
-        // if (typeof(req.params.selectedItem) === 'string') {
-        //  console.log(foundList.items.filter(item => item.name === req.params.selectedItem)[0]);
         let newItem = foundList.items.filter(item => item.name === req.params.selectedItem)[0];
 
         if (newItem !== undefined) {
