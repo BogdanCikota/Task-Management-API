@@ -27,14 +27,18 @@ app.use(cors());
 
 const itemSchema = new mongoose.Schema({
   title: String,
-  description: String
+  description: String,
+  dueDate: String,
+  priority: Number
 });
 
 const Item = mongoose.model('Item', itemSchema);
 
 const item1 = new Item({
   title: 'Welcome to your todo list!',
-  description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'
+  description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
+  dueDate: 'tomorow',
+  priority: 3
 });
 
 // const item2 = new Item({
@@ -116,7 +120,7 @@ app.route('/lists')
       } else {
         const newList = new List({
           title: 'default list',
-          items: defaultItems
+          items: defaultItem
         });
         newList.save(function (error) {
           if (error) {
@@ -185,7 +189,9 @@ app.route('/lists/:selectedList/items')
 
     const newItem = new Item({
       title: req.body.title,
-      description: req.body.description
+      description: req.body.description,
+      dueDate: req.body.dueDate,
+      priority: req.body.priority
     });
 
     List.findOne({ title: req.params.selectedList }, function (err, list) {
@@ -255,7 +261,7 @@ app.route('/lists/:selectedList/items/:selectedItem')
     });
   });
 
-app.route('/lists/:selectedList/items/:selectedItem/title')
+app.route('/lists/:selectedList/items/:selectedItem/:key')
   .patch(function (req, res) {
 
     List.findOne({ title: req.params.selectedList }, function (err, foundList) {
@@ -265,39 +271,16 @@ app.route('/lists/:selectedList/items/:selectedItem/title')
         let foundItem = foundList.items.filter(item => item.title === req.params.selectedItem)[0];
 
         if (foundItem !== undefined) {
-          foundItem.title = req.body.title;
-
-          foundList.save(function (error) {
-            if (error) {
-              res.send(error);
-            } else {
-              List.find({ title: req.params.selectedList }, function (er, foundList) {
-                if (er) {
-                  res.send(er);
-                } else {
-                  res.send(foundList);
-                }
-              });
-            }
-          });
-        } else {
-          res.send('Can not find item with that title');
-        }
-      }
-    });
-  });
-
-  app.route('/lists/:selectedList/items/:selectedItem/description')
-  .patch(function (req, res) {
-
-    List.findOne({ title: req.params.selectedList }, function (err, foundList) {
-      if (err) {
-        res.send(err);
-      } else {
-        let foundItem = foundList.items.filter(item => item.title === req.params.selectedItem)[0];
-
-        if (foundItem !== undefined) {
-          foundItem.description = req.body.description;
+          if(req.params.key === 'title') {
+            foundItem.title = req.body.title;
+          } else if(req.params.key === 'description') {
+            foundItem.description = req.body.description;
+          } else if(req.params.key === 'dueDate') {
+            foundItem.dueDate = req.body.dueDate;
+          } else {
+            foundItem.priority = req.body.priority;
+          } 
+          
 
           foundList.save(function (error) {
             if (error) {
