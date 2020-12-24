@@ -26,21 +26,21 @@ app.use(methodOverride(function (req, res) {
 app.use(cors());
 
 const itemSchema = new mongoose.Schema({
-  name: String
+  title: String
 });
 
 const Item = mongoose.model('Item', itemSchema);
 
 const item1 = new Item({
-  name: 'Welcome to your todo list!'
+  title: 'Welcome to your todo list!'
 });
 
 // const item2 = new Item({
-//   name: 'Hit the + button to add a new item.'
+//   title: 'Hit the + button to add a new item.'
 // });
 
 // const item3 = new Item({
-//   name: '<-- Hit this to delete an item.'
+//   title: '<-- Hit this to delete an item.'
 // });
 
 const defaultItems = [item1];
@@ -50,7 +50,7 @@ const defaultItems = [item1];
 //---------------------------------------------
 
 const listCollectionSchema = new mongoose.Schema({
-  name: String,
+  title: String,
   items: [itemSchema]
 });
 
@@ -68,7 +68,7 @@ app.route('/lists')
       } else {
         if (foundLists.length === 0) {
           const newList = new List({
-            name: 'default list',
+            title: 'default list',
             items: defaultItems
           });
 
@@ -88,7 +88,7 @@ app.route('/lists')
   })
   .post(function (req, res) {
     const newList = new List({
-      name: req.body.name,
+      title: req.body.title,
       items: []
     });
 
@@ -113,7 +113,7 @@ app.route('/lists')
         res.send(err);
       } else {
         const newList = new List({
-          name: 'default list',
+          title: 'default list',
           items: defaultItems
         });
         newList.save(function (error) {
@@ -136,7 +136,7 @@ app.route('/lists')
 
 app.route('/lists/:selectedList')
   .patch(function (req, res) {
-    List.findOneAndUpdate({ name: req.params.selectedList }, { $set: { name: req.body.name } }, { useFindAndModify: false }, function (err) {
+    List.findOneAndUpdate({ title: req.params.selectedList }, { $set: { title: req.body.title } }, { useFindAndModify: false }, function (err) {
       if (err) {
         res.send(err);
       } else {
@@ -151,7 +151,7 @@ app.route('/lists/:selectedList')
     });
   })
   .delete(function (req, res) {
-    List.findOneAndDelete({ name: req.params.selectedList }, { useFindAndModify: false }, function (err) {
+    List.findOneAndDelete({ title: req.params.selectedList }, { useFindAndModify: false }, function (err) {
       if (err) {
         res.send(err);
       } else {
@@ -170,7 +170,7 @@ app.route('/lists/:selectedList/items')
   .get(function (req, res) {
     const selectedList = req.params.selectedList;
 
-    List.findOne({ name: selectedList }, function (err, foundList) {
+    List.findOne({ title: selectedList }, function (err, foundList) {
       if (err) {
         res.send(err);
       } else {
@@ -182,10 +182,10 @@ app.route('/lists/:selectedList/items')
   .post(function (req, res) {
 
     const newItem = new Item({
-      name: req.body.name
+      title: req.body.title
     });
 
-    List.findOne({ name: req.params.selectedList }, function (err, list) {
+    List.findOne({ title: req.params.selectedList }, function (err, list) {
       if (err) {
         res.send(err);
       } else {
@@ -194,7 +194,7 @@ app.route('/lists/:selectedList/items')
           if (error) {
             res.send(error);
           } else {
-            List.findOne({ name: req.params.selectedList }, function (er, foundList) {
+            List.findOne({ title: req.params.selectedList }, function (er, foundList) {
               if (er) {
                 res.send(er);
               } else {
@@ -208,11 +208,11 @@ app.route('/lists/:selectedList/items')
   })
   .patch(function (req, res) {
     //delete all items
-    List.findOneAndUpdate({ name: req.params.selectedList }, { $set: { items: [] } }, { useFindAndModify: false }, function (err) {
+    List.findOneAndUpdate({ title: req.params.selectedList }, { $set: { items: [] } }, { useFindAndModify: false }, function (err) {
       if (err) {
         res.send(err);
       } else {
-        List.findOne({ name: req.params.selectedList }, function (error, foundList) {
+        List.findOne({ title: req.params.selectedList }, function (error, foundList) {
           if (error) {
             res.send(error);
           } else {
@@ -226,20 +226,20 @@ app.route('/lists/:selectedList/items')
 app.route('/lists/:selectedList/items/:selectedItem')
   .patch(function (req, res) {
 
-    List.findOne({ name: req.params.selectedList }, function (err, foundList) {
+    List.findOne({ title: req.params.selectedList }, function (err, foundList) {
       if (err) {
         res.send(err);
       } else {
-        let newItem = foundList.items.filter(item => item.name === req.params.selectedItem)[0];
+        let newItem = foundList.items.filter(item => item.title === req.params.selectedItem)[0];
 
         if (newItem !== undefined) {
-          newItem.name = req.body.name;
+          newItem.title = req.body.title;
 
           foundList.save(function (error) {
             if (error) {
               res.send(error);
             } else {
-              List.find({ name: req.params.selectedList }, function (er, foundList) {
+              List.find({ title: req.params.selectedList }, function (er, foundList) {
                 if (er) {
                   res.send(er);
                 } else {
@@ -249,18 +249,18 @@ app.route('/lists/:selectedList/items/:selectedItem')
             }
           });
         } else {
-          res.send('Can not find item with that name');
+          res.send('Can not find item with that title');
         }
       }
     });
   })
   .delete(function (req, res) {
-    List.findOne({ name: req.params.selectedList }, function (err, foundList) {
+    List.findOne({ title: req.params.selectedList }, function (err, foundList) {
       if (err) {
         res.send(err);
       } else {
 
-        const index = foundList.items.findIndex(item => item.name === req.params.selectedItem);
+        const index = foundList.items.findIndex(item => item.title === req.params.selectedItem);
 
         foundList.items.splice(index, 1);
 
@@ -268,7 +268,7 @@ app.route('/lists/:selectedList/items/:selectedItem')
           if (error) {
             res.send(error);
           } else {
-            List.findOne({ name: req.params.selectedList }, function (er, foundList) {
+            List.findOne({ title: req.params.selectedList }, function (er, foundList) {
               if (er) {
                 res.send(er);
               } else {
