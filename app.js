@@ -26,19 +26,13 @@ app.use(methodOverride(function (req, res) {
 app.use(cors());
 
 const itemSchema = new mongoose.Schema({
-  title: String,
-  description: String,
-  dueDate: String,
-  priority: Number
+  title: String
 });
 
 const Item = mongoose.model('Item', itemSchema);
 
 const item1 = new Item({
-  title: 'Welcome to your todo list!',
-  description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
-  dueDate: 'tomorow',
-  priority: 3
+  title: 'Welcome to your todo list!'
 });
 
 // const item2 = new Item({
@@ -49,7 +43,7 @@ const item1 = new Item({
 //   title: '<-- Hit this to delete an item.'
 // });
 
-const defaultItem = [item1];
+const defaultItems = [item1];
 
 
 
@@ -75,7 +69,7 @@ app.route('/lists')
         if (foundLists.length === 0) {
           const newList = new List({
             title: 'default list',
-            items: defaultItem
+            items: defaultItems
           });
 
           newList.save(function (err) {
@@ -120,7 +114,7 @@ app.route('/lists')
       } else {
         const newList = new List({
           title: 'default list',
-          items: defaultItem
+          items: defaultItems
         });
         newList.save(function (error) {
           if (error) {
@@ -188,10 +182,7 @@ app.route('/lists/:selectedList/items')
   .post(function (req, res) {
 
     const newItem = new Item({
-      title: req.body.title,
-      description: req.body.description,
-      dueDate: req.body.dueDate,
-      priority: req.body.priority
+      title: req.body.title
     });
 
     List.findOne({ title: req.params.selectedList }, function (err, list) {
@@ -233,6 +224,36 @@ app.route('/lists/:selectedList/items')
   })
 
 app.route('/lists/:selectedList/items/:selectedItem')
+  .patch(function (req, res) {
+
+    List.findOne({ title: req.params.selectedList }, function (err, foundList) {
+      if (err) {
+        res.send(err);
+      } else {
+        let newItem = foundList.items.filter(item => item.title === req.params.selectedItem)[0];
+
+        if (newItem !== undefined) {
+          newItem.title = req.body.title;
+
+          foundList.save(function (error) {
+            if (error) {
+              res.send(error);
+            } else {
+              List.find({ title: req.params.selectedList }, function (er, foundList) {
+                if (er) {
+                  res.send(er);
+                } else {
+                  res.send(foundList);
+                }
+              });
+            }
+          });
+        } else {
+          res.send('Can not find item with that title');
+        }
+      }
+    });
+  })
   .delete(function (req, res) {
     List.findOne({ title: req.params.selectedList }, function (err, foundList) {
       if (err) {
@@ -261,46 +282,6 @@ app.route('/lists/:selectedList/items/:selectedItem')
     });
   });
 
-app.route('/lists/:selectedList/items/:selectedItem/:key')
-  .patch(function (req, res) {
-
-    List.findOne({ title: req.params.selectedList }, function (err, foundList) {
-      if (err) {
-        res.send(err);
-      } else {
-        let foundItem = foundList.items.filter(item => item.title === req.params.selectedItem)[0];
-
-        if (foundItem !== undefined) {
-          if(req.params.key === 'title') {
-            foundItem.title = req.body.title;
-          } else if(req.params.key === 'description') {
-            foundItem.description = req.body.description;
-          } else if(req.params.key === 'dueDate') {
-            foundItem.dueDate = req.body.dueDate;
-          } else {
-            foundItem.priority = req.body.priority;
-          } 
-          
-
-          foundList.save(function (error) {
-            if (error) {
-              res.send(error);
-            } else {
-              List.find({ title: req.params.selectedList }, function (er, foundList) {
-                if (er) {
-                  res.send(er);
-                } else {
-                  res.send(foundList);
-                }
-              });
-            }
-          });
-        } else {
-          res.send('Can not find item with that title');
-        }
-      }
-    });
-  });
 
 app.listen(process.env.PORT || 8080, function () {
   console.log("Server started on port 8080");
