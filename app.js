@@ -68,7 +68,7 @@ app.route('/lists')
       } else {
         if (foundLists.length === 0) {
           const newList = new List({
-            title: 'default list',
+            title: 'Default list',
             items: defaultItems
           });
 
