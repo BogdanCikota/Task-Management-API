@@ -113,7 +113,7 @@ app.route('/lists')
         res.send(err);
       } else {
         const newList = new List({
-          title: 'default list',
+          title: 'Default list',
           items: defaultItems
         });
         newList.save(function (error) {
