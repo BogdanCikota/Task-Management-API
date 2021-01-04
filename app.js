@@ -230,27 +230,33 @@ app.route('/lists/:selectedList/items/:selectedItem')
       if (err) {
         res.send(err);
       } else {
-        let newItem = foundList.items.filter(item => item.title === req.params.selectedItem)[0];
 
-        if (newItem !== undefined) {
-          newItem.title = req.body.title;
-
-          foundList.save(function (error) {
-            if (error) {
-              res.send(error);
-            } else {
-              List.find({ title: req.params.selectedList }, function (er, foundList) {
-                if (er) {
-                  res.send(er);
-                } else {
-                  res.send(foundList);
-                }
-              });
-            }
-          });
+        if (foundList === null) {
+          res.send('Can not find list');
         } else {
-          res.send('Can not find item with that title');
+          let newItem = foundList.items.filter(item => item.title === req.params.selectedItem)[0];
+
+          if (newItem !== undefined) {
+            newItem.title = req.body.title;
+
+            foundList.save(function (error) {
+              if (error) {
+                res.send(error);
+              } else {
+                List.find({ title: req.params.selectedList }, function (er, foundList) {
+                  if (er) {
+                    res.send(er);
+                  } else {
+                    res.send(foundList);
+                  }
+                });
+              }
+            });
+          } else {
+            res.send('Can not find item');
+          }
         }
+
       }
     });
   })
