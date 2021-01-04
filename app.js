@@ -136,7 +136,7 @@ app.route('/lists')
 
 app.route('/lists/:selectedList')
   .patch(function (req, res) {
-    List.findOneAndUpdate({ title: req.params.selectedList }, { $set: { title: req.body.title } }, { useFindAndModify: false }, function (err, foundList) {
+    List.findOneAndUpdate({ _id: req.params.selectedList }, { $set: { title: req.body.title } }, { useFindAndModify: false }, function (err, foundList) {
       if (err) {
         res.send(err);
       } else {
@@ -157,7 +157,7 @@ app.route('/lists/:selectedList')
     });
   })
   .delete(function (req, res) {
-    List.findOneAndDelete({ title: req.params.selectedList }, { useFindAndModify: false }, function (err, foundList) {
+    List.findOneAndDelete({ _id: req.params.selectedList }, { useFindAndModify: false }, function (err, foundList) {
       if (err) {
         res.send(err);
       } else {
@@ -181,7 +181,7 @@ app.route('/lists/:selectedList/items')
   .get(function (req, res) {
     const selectedList = req.params.selectedList;
 
-    List.findOne({ title: selectedList }, function (err, foundList) {
+    List.findOne({ _id: selectedList }, function (err, foundList) {
       if (err) {
         res.send(err);
       } else {
@@ -201,7 +201,7 @@ app.route('/lists/:selectedList/items')
       title: req.body.title
     });
 
-    List.findOne({ title: req.params.selectedList }, function (err, list) {
+    List.findOne({ _id: req.params.selectedList }, function (err, list) {
       if (err) {
         res.send(err);
       } else {
@@ -213,7 +213,7 @@ app.route('/lists/:selectedList/items')
             if (error) {
               res.send(error);
             } else {
-              List.findOne({ title: req.params.selectedList }, function (er, foundList) {
+              List.findOne({  _id: req.params.selectedList }, function (er, foundList) {
                 if (er) {
                   res.send(er);
                 } else {
@@ -229,14 +229,14 @@ app.route('/lists/:selectedList/items')
   })
   .patch(function (req, res) {
     //delete all items
-    List.findOneAndUpdate({ title: req.params.selectedList }, { $set: { items: [] } }, { useFindAndModify: false }, function (err, list) {
+    List.findOneAndUpdate({ _id: req.params.selectedList }, { $set: { items: [] } }, { useFindAndModify: false }, function (err, list) {
       if (err) {
         res.send(err);
       } else {
         if (list === null) {
           res.send('Can not find list');
         } else {
-          List.findOne({ title: req.params.selectedList }, function (error, foundList) {
+          List.findOne({ _id: req.params.selectedList }, function (error, foundList) {
             if (error) {
               res.send(error);
             } else {
@@ -252,7 +252,7 @@ app.route('/lists/:selectedList/items')
 app.route('/lists/:selectedList/items/:selectedItem')
   .patch(function (req, res) {
 
-    List.findOne({ title: req.params.selectedList }, function (err, foundList) {
+    List.findOne({ _id: req.params.selectedList }, function (err, foundList) {
       if (err) {
         res.send(err);
       } else {
@@ -260,7 +260,7 @@ app.route('/lists/:selectedList/items/:selectedItem')
         if (foundList === null) {
           res.send('Can not find list');
         } else {
-          let newItem = foundList.items.filter(item => item.title === req.params.selectedItem)[0];
+          let newItem = foundList.items.filter(item => item._id == req.params.selectedItem)[0];
 
           if (newItem !== undefined) {
             newItem.title = req.body.title;
@@ -269,11 +269,11 @@ app.route('/lists/:selectedList/items/:selectedItem')
               if (error) {
                 res.send(error);
               } else {
-                List.find({ title: req.params.selectedList }, function (er, foundList) {
+                List.find({ _id: req.params.selectedList }, function (er, foundNewList) {
                   if (er) {
                     res.send(er);
                   } else {
-                    res.send(foundList);
+                    res.send(foundNewList);
                   }
                 });
               }
@@ -287,17 +287,17 @@ app.route('/lists/:selectedList/items/:selectedItem')
     });
   })
   .delete(function (req, res) {
-    List.findOne({ title: req.params.selectedList }, function (err, foundList) {
+    List.findOne({ _id: req.params.selectedList }, function (err, foundList) {
       if (err) {
         res.send(err);
       } else {
         if (foundList === null) {
           res.send('Can not find list');
         } else {
-          let foundItem = foundList.items.filter(item => item.title === req.params.selectedItem)[0];
+          let foundItem = foundList.items.filter(item => item._id == req.params.selectedItem)[0];
 
           if (foundItem !== undefined) {
-            const index = foundList.items.findIndex(item => item.title === req.params.selectedItem);
+            const index = foundList.items.findIndex(item => item._id == req.params.selectedItem);
 
             foundList.items.splice(index, 1);
 
@@ -305,7 +305,7 @@ app.route('/lists/:selectedList/items/:selectedItem')
               if (error) {
                 res.send(error);
               } else {
-                List.findOne({ title: req.params.selectedList }, function (er, foundList) {
+                List.findOne({ _id: req.params.selectedList }, function (er, foundList) {
                   if (er) {
                     res.send(er);
                   } else {
