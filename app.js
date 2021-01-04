@@ -136,17 +136,23 @@ app.route('/lists')
 
 app.route('/lists/:selectedList')
   .patch(function (req, res) {
-    List.findOneAndUpdate({ title: req.params.selectedList }, { $set: { title: req.body.title } }, { useFindAndModify: false }, function (err) {
+    List.findOneAndUpdate({ title: req.params.selectedList }, { $set: { title: req.body.title } }, { useFindAndModify: false }, function (err, foundList) {
       if (err) {
         res.send(err);
       } else {
-        List.find({}, function (error, foundLists) {
-          if (error) {
-            res.send(error);
-          } else {
-            res.send(foundLists);
-          }
-        });
+
+        if (foundList === null) {
+          res.send('Can not find list');
+        } else {
+          List.find({}, function (error, foundLists) {
+            if (error) {
+              res.send(error);
+            } else {
+              res.send(foundLists);
+            }
+          });
+        }
+
       }
     });
   })
