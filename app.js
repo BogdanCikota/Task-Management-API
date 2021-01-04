@@ -157,17 +157,22 @@ app.route('/lists/:selectedList')
     });
   })
   .delete(function (req, res) {
-    List.findOneAndDelete({ title: req.params.selectedList }, { useFindAndModify: false }, function (err) {
+    List.findOneAndDelete({ title: req.params.selectedList }, { useFindAndModify: false }, function (err, foundList) {
       if (err) {
         res.send(err);
       } else {
-        List.find({}, function (error, foundLists) {
-          if (error) {
-            res.send(error);
-          } else {
-            res.send(foundLists);
-          }
-        });
+        if (foundList === null) {
+          res.send('Can not find list');
+        } else {
+          List.find({}, function (error, foundLists) {
+            if (error) {
+              res.send(error);
+            } else {
+              res.send(foundLists);
+            }
+          });
+        }
+
       }
     });
   });
@@ -180,7 +185,12 @@ app.route('/lists/:selectedList/items')
       if (err) {
         res.send(err);
       } else {
-        res.send(foundList);
+        if (foundList === null) {
+          res.send('Can not find list');
+        } else {
+          res.send(foundList);
+        }
+
       }
     });
   })
@@ -195,36 +205,46 @@ app.route('/lists/:selectedList/items')
       if (err) {
         res.send(err);
       } else {
-        list.items.push(newItem);
-        list.save(function (error) {
-          if (error) {
-            res.send(error);
-          } else {
-            List.findOne({ title: req.params.selectedList }, function (er, foundList) {
-              if (er) {
-                res.send(er);
-              } else {
-                res.send(foundList);
-              }
-            });
-          }
-        });
+        if (list === null) {
+          res.send('Can not find list');
+        } else {
+          list.items.push(newItem);
+          list.save(function (error) {
+            if (error) {
+              res.send(error);
+            } else {
+              List.findOne({ title: req.params.selectedList }, function (er, foundList) {
+                if (er) {
+                  res.send(er);
+                } else {
+                  res.send(foundList);
+                }
+              });
+            }
+          });
+        }
+
       }
     });
   })
   .patch(function (req, res) {
     //delete all items
-    List.findOneAndUpdate({ title: req.params.selectedList }, { $set: { items: [] } }, { useFindAndModify: false }, function (err) {
+    List.findOneAndUpdate({ title: req.params.selectedList }, { $set: { items: [] } }, { useFindAndModify: false }, function (err, list) {
       if (err) {
         res.send(err);
       } else {
-        List.findOne({ title: req.params.selectedList }, function (error, foundList) {
-          if (error) {
-            res.send(error);
-          } else {
-            res.send(foundList);
-          }
-        });
+        if (list === null) {
+          res.send('Can not find list');
+        } else {
+          List.findOne({ title: req.params.selectedList }, function (error, foundList) {
+            if (error) {
+              res.send(error);
+            } else {
+              res.send(foundList);
+            }
+          });
+        }
+
       }
     });
   })
@@ -271,24 +291,36 @@ app.route('/lists/:selectedList/items/:selectedItem')
       if (err) {
         res.send(err);
       } else {
+        if (foundList === null) {
+          res.send('Can not find list');
+        } else {
+          let foundItem = foundList.items.filter(item => item.title === req.params.selectedItem)[0];
 
-        const index = foundList.items.findIndex(item => item.title === req.params.selectedItem);
+          if (foundItem !== undefined) {
+            const index = foundList.items.findIndex(item => item.title === req.params.selectedItem);
 
-        foundList.items.splice(index, 1);
+            foundList.items.splice(index, 1);
 
-        foundList.save(function (error) {
-          if (error) {
-            res.send(error);
-          } else {
-            List.findOne({ title: req.params.selectedList }, function (er, foundList) {
-              if (er) {
-                res.send(er);
+            foundList.save(function (error) {
+              if (error) {
+                res.send(error);
               } else {
-                res.send(foundList);
+                List.findOne({ title: req.params.selectedList }, function (er, foundList) {
+                  if (er) {
+                    res.send(er);
+                  } else {
+                    res.send(foundList);
+                  }
+                });
               }
             });
+          } else {
+            res.send('Can not find item');
           }
-        });
+
+
+        }
+
       }
 
     });
