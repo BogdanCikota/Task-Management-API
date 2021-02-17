@@ -5,8 +5,11 @@ const bodyParser = require("body-parser");
 const mongoose = require('mongoose');
 const methodOverride = require('method-override');
 const cors = require('cors');
+const dotenv = require('dotenv');
 
-mongoose.connect('mongodb+srv://admin-bogdan:test123@cluster0.kbao2.mongodb.net/todoappDB', { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false });
+dotenv.config();
+
+mongoose.connect(`${process.env.START_MONGODB}${process.env.MONGODB_USERNAME}:${process.env.MONGODB_PASSWORD}${process.env.END_MONGODB}`, { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false });
 // mongoose.connect('mongodb://localhost:27017/todolistDB2', { useNewUrlParser: true, useUnifiedTopology: true });
 
 const app = express();
