@@ -35,7 +35,7 @@ const itemSchema = new mongoose.Schema({
 const Item = mongoose.model('Item', itemSchema);
 
 const item1 = new Item({
-  title: 'Welcome to your todo list!'
+  title: 'default task'
 });
 
 // const item2 = new Item({
